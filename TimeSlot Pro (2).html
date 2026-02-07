@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeSlot Pro - Gestione Tempo Quotidiana</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+        :root {
+            --color-bg-base: #ffffff;
+            --color-bg-elevated: #f8f9fa;
+            --color-bg-surface: #e9ecef;
+            --color-text-primary: #081977;
+            --color-text-secondary: #495057;
+            --color-text-muted: #6c757d;
+            --color-primary: #081977;
+            --color-secondary: #0a1f8f;
+            --color-success: #10B981;
+            --color-warning: #F59E0B;
+            --color-danger: #EF4444;
+            --color-border: rgba(8, 25, 119, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--color-bg-base);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 2px solid var(--color-primary);
+            margin-bottom: 30px;
+        }
+
+        .header-left h1 {
+            font-size: 2rem;
+            color: var(--color-primary);
+            margin-bottom: 5px;
+        }
+
+        .header-left .subtitle {
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+        }
+
+        .current-time-display {
+            text-align: right;
+        }
+
+        .current-time {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-secondary);
+        }
+
+        .current-date {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar {
+            background: var(--color-bg-elevated);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            height: fit-content;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--color-secondary);
+        }
+
+        .task-input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--color-bg-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            color: var(--color-text-primary);
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-secondary);
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .btn-success {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--color-danger);
+            color: white;
+        }
+
+        .task-list {
+            margin-top: 20px;
+        }
+
+        .task-item {
+            background: var(--color-bg-surface);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid var(--color-primary);
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+            border-left-color: var(--color-success);
+        }
+
+        .task-info {
+            flex: 1;
+        }
+
+        .task-name {
+            font-weight: 500;
+            color: var(--color-text-primary);
+            margin-bottom: 4px;
+        }
+
+        .task-item.completed .task-name {
+            text-decoration: line-through;
+        }
+
+        .task-duration {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .stat-card {
+            background: var(--color-bg-surface);
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-secondary);
+        }
+
+        .timeline-section {
+            background: var(--color-bg-elevated);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+        }
+
+        .timeline-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .timeline-grid {
+            display: grid;
+            gap: 8px;
+        }
+
+        .slot-row {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .slot-time {
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+            text-align: right;
+        }
+
+        .slot-content {
+            background: var(--color-bg-surface);
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid var(--color-border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .slot-content:hover {
+            border-color: var(--color-primary);
+        }
+
+        .slot-content.active {
+            background: linear-gradient(135deg, rgba(8, 25, 119, 0.15) 0%, rgba(8, 25, 119, 0.05) 100%);
+            border-color: var(--color-primary);
+            animation: pulse-border 2s infinite;
+        }
+
+        .slot-content.completed {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--color-success);
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(8, 25, 119, 0.3); }
+            50% { box-shadow: 0 0 0 8px rgba(8, 25, 119, 0); }
+        }
+
+        .slot-task-name {
+            font-weight: 500;
+            color: var(--color-text-primary);
+        }
+
+        .slot-timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timer-display {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--color-secondary);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 2px solid var(--color-primary);
+            border-radius: 8px;
+            padding: 16px 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            max-width: 350px;
+        }
+
+        .notification.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 8px;
+        }
+
+        .notification-message {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .dashboard-section {
+            background: var(--color-bg-elevated);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            margin-top: 30px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid var(--color-border);
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .dashboard-card-title {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dashboard-card-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .dashboard-card.success .dashboard-card-value {
+            color: var(--color-success);
+        }
+
+        .dashboard-card.warning .dashboard-card-value {
+            color: var(--color-warning);
+        }
+
+        .dashboard-card.danger .dashboard-card-value {
+            color: var(--color-danger);
+        }
+
+        .task-summary {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid var(--color-border);
+        }
+
+        .task-summary-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .task-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .summary-item {
+            padding: 12px;
+            background: var(--color-bg-elevated);
+            border-radius: 8px;
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .summary-item.success {
+            border-left-color: var(--color-success);
+        }
+
+        .summary-item.warning {
+            border-left-color: var(--color-warning);
+        }
+
+        .summary-item-label {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            margin-bottom: 4px;
+        }
+
+        .summary-item-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--color-bg-surface);
+            border-radius: 3px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--color-primary);
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <h1>⏱️ TimeSlot Pro</h1>
+                <p class="subtitle">Gestione Tempo e Task Quotidiani</p>
+            </div>
+            <div class="current-time-display">
+                <div class="current-time" id="current-time">00:00:00</div>
+                <div class="current-date" id="current-date">Caricamento...</div>
+            </div>
+        </header>
+
+        <div class="main-grid">
+            <aside class="sidebar">
+                <h2 class="section-title">📋 To-Do List</h2>
+                
+                <div class="task-input-group">
+                    <input type="text" id="task-name" class="input-field" placeholder="Nome task...">
+                    <input type="number" id="task-duration" class="input-field" placeholder="Durata (minuti)" min="5" step="5" value="30">
+                    <button class="btn btn-primary" onclick="addTask()">+ Aggiungi Task</button>
+                </div>
+
+                <div class="task-list" id="task-list"></div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Task Totali</div>
+                        <div class="stat-value" id="total-tasks">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Completati</div>
+                        <div class="stat-value" id="completed-tasks">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Tempo Stimato</div>
+                        <div class="stat-value" id="estimated-time">0h</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Produttività</div>
+                        <div class="stat-value" id="productivity">0%</div>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="timeline-section">
+                <div class="timeline-controls">
+                    <h2 class="section-title">🕐 Timeline Giornaliera</h2>
+                    <button class="btn btn-success btn-small" onclick="exportReport()">📊 Export Report</button>
+                </div>
+
+                <div class="timeline-grid" id="timeline-grid"></div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="day-progress"></div>
+                </div>
+            </main>
+        </div>
+
+        <section class="dashboard-section">
+            <h2 class="section-title">📊 Dashboard Riepilogativa</h2>
+            
+            <div class="dashboard-grid">
+                <div class="dashboard-card success">
+                    <div class="dashboard-card-title">Task Completati</div>
+                    <div class="dashboard-card-value" id="dash-completed">0</div>
+                </div>
+                <div class="dashboard-card warning">
+                    <div class="dashboard-card-title">In Corso</div>
+                    <div class="dashboard-card-value" id="dash-active">0</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="dashboard-card-title">Da Fare</div>
+                    <div class="dashboard-card-value" id="dash-pending">0</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="dashboard-card-title">Tempo Totale</div>
+                    <div class="dashboard-card-value" id="dash-total-time">0h</div>
+                </div>
+            </div>
+
+            <div class="task-summary">
+                <div class="task-summary-title">Dettaglio Performance</div>
+                <div class="task-summary-grid">
+                    <div class="summary-item success">
+                        <div class="summary-item-label">Finiti in Tempo</div>
+                        <div class="summary-item-value" id="dash-on-time">0</div>
+                    </div>
+                    <div class="summary-item warning">
+                        <div class="summary-item-label">Oltre Tempo Previsto</div>
+                        <div class="summary-item-value" id="dash-overtime">0</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-item-label">Efficienza Media</div>
+                        <div class="summary-item-value" id="dash-efficiency">100%</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-item-label">Slot Utilizzati</div>
+                        <div class="summary-item-value" id="dash-slots-used">0/20</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="notification" id="notification">
+            <div class="notification-title" id="notification-title">Avviso</div>
+            <div class="notification-message" id="notification-message">Messaggio</div>
+        </div>
+    </div>
+
+    <script>
+        const TIME_SLOTS = [];
+        const START_HOUR = 8;
+        const END_HOUR = 18;
+
+        for (let hour = START_HOUR; hour < END_HOUR; hour++) {
+            TIME_SLOTS.push(`${hour.toString().padStart(2, '0')}:00`);
+            TIME_SLOTS.push(`${hour.toString().padStart(2, '0')}:30`);
+        }
+
+        let tasks = [];
+        let slots = {};
+        let activeSlotIndex = -1;
+        let slotTimers = {};
+
+        function initApp() {
+            renderTimeSlots();
+            renderTaskList();
+            updateStats();
+            startClock();
+        }
+
+        function startClock() {
+            function updateClock() {
+                const now = new Date();
+                document.getElementById('current-time').textContent = now.toLocaleTimeString('it-IT');
+                document.getElementById('current-date').textContent = now.toLocaleDateString('it-IT', { 
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+                });
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        function renderTimeSlots() {
+            const grid = document.getElementById('timeline-grid');
+            grid.innerHTML = '';
+
+            TIME_SLOTS.forEach((time, index) => {
+                const row = document.createElement('div');
+                row.className = 'slot-row';
+
+                const timeLabel = document.createElement('div');
+                timeLabel.className = 'slot-time';
+                timeLabel.textContent = time;
+
+                const slotContent = document.createElement('div');
+                slotContent.className = 'slot-content';
+                slotContent.id = `slot-${index}`;
+
+                const slot = slots[index];
+                if (slot) {
+                    const taskName = document.createElement('span');
+                    taskName.className = 'slot-task-name';
+                    taskName.textContent = slot.taskName;
+
+                    const timerDiv = document.createElement('div');
+                    timerDiv.className = 'slot-timer';
+                    
+                    if (slot.completed) {
+                        slotContent.classList.add('completed');
+                        timerDiv.innerHTML = '<span style="color: var(--color-success);">✓ Completato</span>';
+                    } else if (slot.active) {
+                        slotContent.classList.add('active');
+                        const timerDisplay = document.createElement('span');
+                        timerDisplay.className = 'timer-display';
+                        timerDisplay.id = `timer-${index}`;
+                        timerDisplay.textContent = formatTime(slot.elapsed || 0);
+                        timerDiv.appendChild(timerDisplay);
+                        
+                        const stopBtn = document.createElement('button');
+                        stopBtn.className = 'btn btn-danger btn-small';
+                        stopBtn.textContent = '■';
+                        stopBtn.onclick = (e) => { e.stopPropagation(); stopSlot(index); };
+                        timerDiv.appendChild(stopBtn);
+                    } else {
+                        const startBtn = document.createElement('button');
+                        startBtn.className = 'btn btn-success btn-small';
+                        startBtn.textContent = '▶';
+                        startBtn.onclick = (e) => { e.stopPropagation(); startSlot(index); };
+                        timerDiv.appendChild(startBtn);
+                    }
+
+                    slotContent.appendChild(taskName);
+                    slotContent.appendChild(timerDiv);
+                } else {
+                    const selectWrapper = document.createElement('div');
+                    selectWrapper.style.cssText = 'display: flex; gap: 8px; align-items: center; width: 100%;';
+                    
+                    const selectField = document.createElement('select');
+                    selectField.className = 'input-field';
+                    selectField.style.cssText = 'flex: 1; margin: 0; padding: 8px;';
+                    
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Seleziona task...';
+                    selectField.appendChild(defaultOption);
+                    
+                    tasks.filter(t => !t.completed).forEach((task) => {
+                        const option = document.createElement('option');
+                        option.value = task.id;
+                        option.textContent = `${task.name} (${task.duration} min)`;
+                        selectField.appendChild(option);
+                    });
+                    
+                    selectField.onchange = (e) => {
+                        const taskId = parseInt(e.target.value);
+                        if (taskId) {
+                            assignTaskToSlot(index, taskId);
+                        }
+                    };
+                    
+                    selectWrapper.appendChild(selectField);
+                    slotContent.appendChild(selectWrapper);
+                }
+
+                row.appendChild(timeLabel);
+                row.appendChild(slotContent);
+                grid.appendChild(row);
+            });
+        }
+
+        function assignTaskToSlot(slotIndex, taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            slots[slotIndex] = {
+                taskName: task.name,
+                taskId: task.id,
+                active: false,
+                completed: false,
+                elapsed: 0
+            };
+
+            showNotification('✓ Assegnato', `"${task.name}" → ${TIME_SLOTS[slotIndex]}`);
+            renderTimeSlots();
+        }
+
+        function startSlot(slotIndex) {
+            Object.keys(slotTimers).forEach(k => clearInterval(slotTimers[k]));
+            Object.keys(slots).forEach(k => { if (slots[k]) slots[k].active = false; });
+
+            slots[slotIndex].active = true;
+            activeSlotIndex = slotIndex;
+
+            slotTimers[slotIndex] = setInterval(() => {
+                slots[slotIndex].elapsed++;
+                const el = document.getElementById(`timer-${slotIndex}`);
+                if (el) el.textContent = formatTime(slots[slotIndex].elapsed);
+                
+                if (slots[slotIndex].elapsed >= 1800) {
+                    showNotification('⏰ Tempo Scaduto', `Slot "${slots[slotIndex].taskName}" completato!`);
+                }
+            }, 1000);
+
+            renderTimeSlots();
+        }
+
+        function stopSlot(slotIndex) {
+            clearInterval(slotTimers[slotIndex]);
+            delete slotTimers[slotIndex];
+
+            if (slots[slotIndex]) {
+                slots[slotIndex].active = false;
+                
+                if (confirm('Task completato?')) {
+                    slots[slotIndex].completed = true;
+                    const task = tasks.find(t => t.id === slots[slotIndex].taskId);
+                    if (task) task.completed = true;
+                    renderTaskList();
+                    updateStats();
+                }
+            }
+
+            activeSlotIndex = -1;
+            renderTimeSlots();
+        }
+
+        function addTask() {
+            const nameInput = document.getElementById('task-name');
+            const durationInput = document.getElementById('task-duration');
+
+            const name = nameInput.value.trim();
+            const duration = parseInt(durationInput.value);
+
+            if (!name || !duration) {
+                showNotification('Errore', 'Inserisci nome e durata!');
+                return;
+            }
+
+            tasks.push({
+                id: Date.now(),
+                name: name,
+                duration: duration,
+                completed: false
+            });
+
+            nameInput.value = '';
+            durationInput.value = '30';
+
+            renderTaskList();
+            renderTimeSlots();
+            updateStats();
+            showNotification('✓ Task Aggiunto', `"${name}" aggiunto!`);
+        }
+
+        function renderTaskList() {
+            const list = document.getElementById('task-list');
+            list.innerHTML = '';
+
+            tasks.forEach((task, index) => {
+                const item = document.createElement('div');
+                item.className = `task-item ${task.completed ? 'completed' : ''}`;
+
+                const info = document.createElement('div');
+                info.className = 'task-info';
+
+                const name = document.createElement('div');
+                name.className = 'task-name';
+                name.textContent = task.name;
+
+                const duration = document.createElement('div');
+                duration.className = 'task-duration';
+                duration.textContent = `⏱ ${task.duration} min`;
+
+                info.appendChild(name);
+                info.appendChild(duration);
+
+                const actions = document.createElement('div');
+                actions.className = 'task-actions';
+
+                if (!task.completed) {
+                    const completeBtn = document.createElement('button');
+                    completeBtn.className = 'btn btn-success btn-small';
+                    completeBtn.textContent = '✓';
+                    completeBtn.onclick = () => {
+                        task.completed = true;
+                        renderTaskList();
+                        renderTimeSlots();
+                        updateStats();
+                    };
+                    actions.appendChild(completeBtn);
+                }
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn btn-danger btn-small';
+                deleteBtn.textContent = '✗';
+                deleteBtn.onclick = () => {
+                    tasks.splice(index, 1);
+                    renderTaskList();
+                    renderTimeSlots();
+                    updateStats();
+                };
+                actions.appendChild(deleteBtn);
+
+                item.appendChild(info);
+                item.appendChild(actions);
+                list.appendChild(item);
+            });
+        }
+
+        function updateStats() {
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.completed).length;
+            const estimatedMinutes = tasks.reduce((sum, t) => sum + t.duration, 0);
+            const productivity = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+            document.getElementById('total-tasks').textContent = total;
+            document.getElementById('completed-tasks').textContent = completed;
+            document.getElementById('estimated-time').textContent = `${Math.floor(estimatedMinutes / 60)}h ${estimatedMinutes % 60}m`;
+            document.getElementById('productivity').textContent = `${productivity}%`;
+            document.getElementById('day-progress').style.width = `${productivity}%`;
+            
+            updateDashboard();
+        }
+
+        function updateDashboard() {
+            const completedTasks = tasks.filter(t => t.completed);
+            const activeTasks = Object.values(slots).filter(s => s && s.active).length;
+            const pendingTasks = tasks.filter(t => !t.completed).length;
+            const totalMinutes = completedTasks.reduce((sum, t) => sum + t.duration, 0);
+            
+            let onTime = 0;
+            let overtime = 0;
+            
+            Object.values(slots).forEach(slot => {
+                if (slot && slot.completed) {
+                    const task = tasks.find(t => t.id === slot.taskId);
+                    if (task) {
+                        const timeSpent = slot.elapsed / 60;
+                        const timeEstimated = task.duration;
+                        if (timeSpent <= timeEstimated) {
+                            onTime++;
+                        } else {
+                            overtime++;
+                        }
+                    }
+                }
+            });
+            
+            const totalCompleted = onTime + overtime;
+            const efficiency = totalCompleted > 0 ? Math.round((onTime / totalCompleted) * 100) : 100;
+            const slotsUsed = Object.keys(slots).length;
+            const totalSlots = TIME_SLOTS.length;
+            
+            document.getElementById('dash-completed').textContent = completedTasks.length;
+            document.getElementById('dash-active').textContent = activeTasks;
+            document.getElementById('dash-pending').textContent = pendingTasks;
+            document.getElementById('dash-total-time').textContent = `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`;
+            document.getElementById('dash-on-time').textContent = onTime;
+            document.getElementById('dash-overtime').textContent = overtime;
+            document.getElementById('dash-efficiency').textContent = `${efficiency}%`;
+            document.getElementById('dash-slots-used').textContent = `${slotsUsed}/${totalSlots}`;
+        }
+
+        function showNotification(title, message) {
+            const notification = document.getElementById('notification');
+            document.getElementById('notification-title').textContent = title;
+            document.getElementById('notification-message').textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => notification.classList.remove('show'), 4000);
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function exportReport() {
+            const dashboardSection = document.querySelector('.dashboard-section');
+            dashboardSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            showNotification('📊 Dashboard Aggiornata', 'Scorri in basso per vedere il riepilogo completo');
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
